@@ -10,6 +10,13 @@ window.onload = async function(){
     let parsedData = d3.csvParse(medals, d3.autoType);
     // console.log("Parsed data:", parsedData);
 
+    // Create a stack generator
+    const stack = d3.stack()
+    .keys(["Gold", "Silver", "Bronze"]);
+
+    const series = stack(parsedData);
+    console.log("Stacked data:", series);
+
     //create a bar chart
     const margin = {top: 20, right:30, bottom: 40, left:90};
     const div = document.getElementById("leftDiv");
@@ -28,30 +35,62 @@ window.onload = async function(){
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    // X axis
     const x = d3.scaleLinear()
-        .domain([0, d3.max(parsedData, d=> d.Total)])
+        .domain([0, d3.max(parsedData, d => d.Total)])
         .range([0, width]);
-
-    const y = d3.scaleBand()
-        .domain(parsedData.map(d => d["Team/NOC"]))
-        .range([0, height])
-        .padding(0.1);
-    
-    svg.append("g")
-        .selectAll("rect")
-        .data(parsedData)
-        .enter()
-        .append("rect")
-        .attr("x", x(0))
-        .attr("y", d=> y(d["Team/NOC"]))
-        .attr("width", d => x(d.Total))
-        .attr("height", y.bandwidth())
-        .attr("fill", "steelblue");
-
-    svg.append("g")
-        .call(d3.axisLeft(y));
 
     svg.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x));
+
+    // Y axis
+    const y = d3.scaleBand()
+        .domain(parsedData.map(d => d["Team/NOC"]))
+        .range([0, height])
+        .padding(0.1);
+
+    svg.append("g")
+        .call(d3.axisLeft(y));
+    
+    // Color scale
+    const color = d3.scaleOrdinal()
+        .domain(["Gold", "Silver", "Bronze"])
+        .range(["#ffd700", "#c0c0c0", "#cd7f32"]);
+
+    // Tooltip
+    const tooltip = d3.select(".tooltip");
+
+    // Bars
+    svg.append("g")
+        .selectAll("g")
+        .data(series)
+        .enter()
+        .append("g")
+        .attr("fill", d => color(d.key))
+        .selectAll("rect")
+        .data(d => d)
+        .enter()
+        .append("rect")
+        .attr("x", d => x(d[0]))
+        .attr("y", d => y(d.data["Team/NOC"]))
+        .attr("width", d => x(d[1]) - x(d[0]))
+        .attr("height", y.bandwidth())
+        .on("mouseover", function(event, d) {
+            const [xStart, xEnd] = d;
+            const medalsCount = xEnd - xStart; // get medal count from data
+            tooltip.transition() // fade in
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(medalsCount) // position tooltip
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 9) + "px");
+            d3.select(this).attr("stroke", "black"); //outline bar
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition() // fade out
+                .duration(200)
+                .style("opacity", 0);
+            d3.select(this).attr("stroke", null); // remove outline
+        });
 };
