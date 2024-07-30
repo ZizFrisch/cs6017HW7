@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#chart {
+    width: 600px;
+    height: 400px;
+    margin: auto;
+}
