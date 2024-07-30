@@ -1,9 +1,50 @@
-body {
-    font-family: Arial, sans-serif;
+body{
+    display:flex;
+}
+#main {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+}
+#leftDiv {
+    /* width: 40%; */
+    width: 500px;
+    height: 900px;
+    overflow-y: scroll;
+    display: inline-block;
+    direction: ltr;
+    border: 3px solid pink;
+    flex:1;
+}
+div {
+    border: 3px solid black;
 }
 
-#chart {
-    width: 600px;
-    height: 400px;
-    margin: auto;
+.selected {
+    background: blue;
+}
+
+svg{
+    border: 3px solid blue;
+    /* display: block;
+    width: 100% */
+}
+#centerDiv {
+    /* width: 40%; */
+    width: 500px;
+    height: 900px;
+    display: inline-block;
+    border: 3px solid red;
+    flex:1;
+}
+#canvas {
+    height: 600px;
+}
+
+#rightDiv {
+    width: 15%;
+    height: 900px;
+    display: inline-block;
+    border: 3px solid purple;
 }
