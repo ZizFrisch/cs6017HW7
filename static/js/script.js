@@ -110,6 +110,24 @@ function createMedalsChart(data, selectedCountries = []){
 
     svg.append("g")
         .call(d3.axisLeft(y));
+
+    // add gridlines for the x-axis
+    svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x)
+            .ticks(10)
+            .tickSize(-height)
+            .tickFormat("")
+        );
+
+    // // add gridlines for the y-axis
+    // svg.append("g")
+    //     .attr("class", "grid")
+    //     .call(d3.axisLeft(y)
+    //         .tickSize(-width)
+    //         .tickFormat("")
+    //     );
     
     // color scale
     const color = d3.scaleOrdinal()
@@ -175,7 +193,7 @@ function generateCountryButtons(data) {
                 // If not selected, select all buttons
                 rightDiv.selectAll("button").classed("selected", true);
             }
-            updateSelectedCountries();
+            updateSelectedCountries(data);
         });
 
     // create buttons for each country
@@ -186,7 +204,7 @@ function generateCountryButtons(data) {
             .text(team)
             .on("click", function() {
                 d3.select(this).classed("selected", !d3.select(this).classed("selected"));
-                updateSelectedCountries();
+                updateSelectedCountries(data);
             });
     });
 }
@@ -295,7 +313,7 @@ function createRatioChart(data, selectedCountries = []){
     //     });
 }
 
-function updateSelectedCountries() {
+function updateSelectedCountries(data) {
     const selectedCountries = d3.selectAll(".country-button.selected")
         .nodes()
         .map(button => button.getAttribute("data-team"));
@@ -304,4 +322,5 @@ function updateSelectedCountries() {
 
     // TODO
     // trigger listener for barchat like updateBarChart(selectedCountries);
+    createMedalsChart(data, selectedCountries);
 }
