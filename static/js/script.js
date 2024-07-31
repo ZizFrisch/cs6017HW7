@@ -76,7 +76,7 @@ function createMedalsChart(data, selectedCountries = []){
     console.log("Stacked data:", series);
 
     //create a bar chart
-    const margin = {top: 20, right:30, bottom: 40, left:130};
+    const margin = {top: 5, right:30, bottom: 40, left:130};
     const div = document.getElementById("leftDiv");
     const divWidth = div.clientWidth;
     const divHeight = div.clientHeight;
@@ -84,7 +84,7 @@ function createMedalsChart(data, selectedCountries = []){
     const height = divHeight - margin.top - margin.bottom;
 
     //clear any existing content in the leftDiv
-    d3.select("#leftDiv").selectAll("*").remove();
+    d3.select("#leftDiv").selectAll("svg").remove();
 
     const svg = d3.select("#leftDiv")
         .append("svg")
@@ -98,9 +98,30 @@ function createMedalsChart(data, selectedCountries = []){
         .domain([0, d3.max(data, d => d.Total)])
         .range([0, width]);
 
+    // calculate tick values and grid values
+    const xMax = d3.max(data, d => d.Total)
+    const xTickValues = d3.range(0, xMax, 10);
+    const xGridValues = d3.range(0, xMax, 5);
+
     svg.append("g")
         .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x).tickValues(xTickValues));
+
+    // add gridlines for the x-axis
+    svg.append("g")
+    .attr("class", "grid")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x)
+        .tickValues(xGridValues)
+        .tickSize(-height)
+        .tickFormat("")
+    )
+    .selectAll(".tick")
+    .each(function(d) {
+        if (xTickValues.includes(d)) {
+            d3.select(this).select("line").classed("label-grid-line", true);
+        }
+    });
 
     // Y axis
     const y = d3.scaleBand()
@@ -110,24 +131,6 @@ function createMedalsChart(data, selectedCountries = []){
 
     svg.append("g")
         .call(d3.axisLeft(y));
-
-    // add gridlines for the x-axis
-    svg.append("g")
-        .attr("class", "grid")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x)
-            .ticks(10)
-            .tickSize(-height)
-            .tickFormat("")
-        );
-
-    // // add gridlines for the y-axis
-    // svg.append("g")
-    //     .attr("class", "grid")
-    //     .call(d3.axisLeft(y)
-    //         .tickSize(-width)
-    //         .tickFormat("")
-    //     );
     
     // color scale
     const color = d3.scaleOrdinal()

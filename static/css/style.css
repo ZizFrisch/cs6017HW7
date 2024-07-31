@@ -71,3 +71,14 @@ button.selected {
     border: 2px solid black;
     color: black;
 }
+
+.grid line {
+    stroke: lightgray;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid .label-grid-line {
+    stroke: gray;
+    stroke-width: 2;
+}
