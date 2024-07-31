@@ -157,7 +157,8 @@ function generateCountryButtons(data) {
     const rightDiv = d3.select("#rightDiv");
 
     // sort countries alphabetically
-    data.sort((a, b) => d3.ascending(a["Team/NOC"], b["Team/NOC"]));
+    //data.sort((a, b) => d3.ascending(a["Team/NOC"], b["Team/NOC"]));
+    const teams = [...new Set(data.map(d => d["Team/NOC"]))].sort(d3.ascending);
 
     // create button for all countries
     rightDiv.append("button")
@@ -178,11 +179,11 @@ function generateCountryButtons(data) {
         });
 
     // create buttons for each country
-    data.forEach(d => {
+    teams.forEach(team => {
         rightDiv.append("button")
-            .attr("class", "team-button")
-            .attr("data-team", d["Team/NOC"])
-            .text(d["Team/NOC"])
+            .attr("class", "country-button")
+            .attr("data-team", team)
+            .text(team)
             .on("click", function() {
                 d3.select(this).classed("selected", !d3.select(this).classed("selected"));
                 updateSelectedCountries();
@@ -205,7 +206,7 @@ function createRatioChart(data, selectedCountries = []){
     }
     
     //create a bar chart
-    const margin = {top: 20, right:30, bottom: 40, left:90};
+    const margin = {top: 20, right:30, bottom: 40, left:130};
     const div = document.getElementById("centerDiv");
     const divWidth = div.clientWidth;
     const divHeight = div.clientHeight;
@@ -295,7 +296,7 @@ function createRatioChart(data, selectedCountries = []){
 }
 
 function updateSelectedCountries() {
-    const selectedCountries = d3.selectAll(".team-button.selected")
+    const selectedCountries = d3.selectAll(".country-button.selected")
         .nodes()
         .map(button => button.getAttribute("data-team"));
 
