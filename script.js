@@ -4,14 +4,14 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm"
 
 window.onload = async function(){
     //load and parse medals data
-    let response = await fetch("Medals.csv")
+    let response = await fetch("medals.csv")
     let medals = await response.text();
 
     //parse the csv data
     let parsedData = d3.csvParse(medals, d3.autoType);
 
     //load and parse athletes data
-    let athletesResponse = await fetch("Athletes.csv")
+    let athletesResponse = await fetch("athletes.csv")
     let athletes = await athletesResponse.text();
     let parsedAthletes = d3.csvParse(athletes, d3.autoType);
 
