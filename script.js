@@ -2,7 +2,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm"
 
 window.onload = async function(){
     //load and parse medals data
-    let response = await fetch("medals.csv")
+    let response = await fetch("Medals.csv")
     let medals = await response.text();
 
     //parse the csv data
