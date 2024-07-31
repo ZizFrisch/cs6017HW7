@@ -47,6 +47,7 @@ svg{
     height: 900px;
     display: inline-block;
     border: 3px solid purple;
+    overflow-y: scroll;
 }
 
 .tooltip {
@@ -61,4 +62,20 @@ svg{
     border-radius: 8px;
     pointer-events: none;
     opacity: 0;
+}
+button {
+    display: block;
+    margin: 5px;
+    padding: 10px;
+    width: calc(100% - 20px);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: lightgray;
+    cursor: pointer;
+    text-align: center;
+}
+button.selected {
+    background: lightgreen;
+    border: 2px solid black;
+    color: black;
 }
