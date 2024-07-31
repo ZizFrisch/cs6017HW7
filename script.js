@@ -1,3 +1,5 @@
+//Jess Payton and Ziz Frischknecht
+
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm"
 
 window.onload = async function(){
@@ -313,3 +315,4 @@ function updateSelectedCountries(data, ratioData) {
     createMedalsChart(data, selectedCountries);
     createRatioChart(ratioData, selectedCountries);
 }
+
