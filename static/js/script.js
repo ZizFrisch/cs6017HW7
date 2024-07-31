@@ -20,10 +20,11 @@ window.onload = async function(){
     console.log("RatioData: ", ratioData);
     
 
-    // generate country buttons
-    generateCountryButtons(parsedData);
+    
     createMedalsChart(parsedData);
     createRatioChart(ratioData);
+    // generate country buttons
+    generateCountryButtons(parsedData);
 };
 
 
@@ -62,6 +63,7 @@ function getRatios(medals, athletes){
 
 function createMedalsChart(data, selectedCountries = []){
     // Filter data if selected countries are provided
+    // This creates a new filtered array and assigns it to 'data'
     if (selectedCountries.length > 0) {
         data = data.filter(d => selectedCountries.includes(d["Team/NOC"]));
     }
