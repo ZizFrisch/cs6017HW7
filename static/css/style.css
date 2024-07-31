@@ -9,8 +9,8 @@ body{
 }
 #leftDiv, #centerDiv {
     width: 500px;
-    height: 900px;
-    overflow-y: scroll;
+    height: 1000px;
+    /* overflow-y: scroll; */
     display: inline-block;
     direction: ltr;
     flex:1;
@@ -33,7 +33,7 @@ svg{
 
 #rightDiv {
     width: 15%;
-    height: 900px;
+    height: 1000px;
     display: inline-block;
     border: 2px solid gray;
     overflow-y: scroll;

@@ -4,11 +4,9 @@ window.onload = async function(){
     //load and parse medals data
     let response = await fetch("/static/data/medals.csv")
     let medals = await response.text();
-    // console.log("CSV data:", medals);
-    //let medals = await d3.text("/static/data/medals.csv"); //returns a "promise"
+
     //parse the csv data
     let parsedData = d3.csvParse(medals, d3.autoType);
-    // console.log("Parsed data:", parsedData);
 
     //load and parse athletes data
     let athletesResponse = await fetch("/static/data/Athletes.csv")
@@ -18,8 +16,6 @@ window.onload = async function(){
     // aggregate medals and athletes by country
     let ratioData = getRatios(parsedData, parsedAthletes);
     console.log("RatioData: ", ratioData);
-    
-
     
     createMedalsChart(parsedData);
     createRatioChart(ratioData);
@@ -60,7 +56,7 @@ function getRatios(medals, athletes){
     return ratioData;
 }
 
-
+// Function draws the medals chart in the right div based on updated selected countries
 function createMedalsChart(data, selectedCountries = []){
     // Filter data if selected countries are provided
     // This creates a new filtered array and assigns it to 'data'
@@ -72,7 +68,6 @@ function createMedalsChart(data, selectedCountries = []){
         d3.select("#leftDiv").selectAll("svg").remove();
         return;
     }
-    
     
     //create a stack generator
     const stack = d3.stack()
@@ -147,14 +142,6 @@ function createMedalsChart(data, selectedCountries = []){
             .tickSize(-height)
             .tickFormat("")
         );
-
-    // // add gridlines for the y-axis
-    // svg.append("g")
-    //     .attr("class", "grid")
-    //     .call(d3.axisLeft(y)
-    //         .tickSize(-width)
-    //         .tickFormat("")
-    //     );
     
     // color scale
     const color = d3.scaleOrdinal()
@@ -198,11 +185,11 @@ function createMedalsChart(data, selectedCountries = []){
         });
 };
 
+// generate country buttons in the right div
 function generateCountryButtons(data, ratioData) {
     const rightDiv = d3.select("#rightDiv");
 
     // sort countries alphabetically
-    //data.sort((a, b) => d3.ascending(a["Team/NOC"], b["Team/NOC"]));
     const teams = [...new Set(data.map(d => d["Team/NOC"]))].sort(d3.ascending);
 
     // create button for all countries
@@ -236,7 +223,7 @@ function generateCountryButtons(data, ratioData) {
     });
 }
 
-
+// create ratio chart in the center div
 function createRatioChart(data, selectedCountries = []){
     // Filter data if selected countries are provided
     if (selectedCountries.length > 0) {
@@ -279,6 +266,8 @@ function createRatioChart(data, selectedCountries = []){
         .range([0, height])
         .padding(0.1);
 
+    const tooltip = d3.select(".tooltip");
+
     //Bars
     svg.append("g")
         .selectAll("rect")
@@ -289,7 +278,23 @@ function createRatioChart(data, selectedCountries = []){
         .attr("y", d => y(d.country))
         .attr("width", d => x(d.ratio))
         .attr("height", y.bandwidth())
-        .attr("fill", "steelblue");
+        .attr("fill", "steelblue")
+        .on("mouseover", function(event, d) {
+            const ratio = d.ratio.toFixed(2); // get ratio from data
+            tooltip.transition() // fade in
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(ratio) // position tooltip
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 9) + "px");
+            d3.select(this).attr("stroke", "black"); //outline bar
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition() // fade out
+                .duration(200)
+                .style("opacity", 0);
+            d3.select(this).attr("stroke", null); // remove outline
+        });
 
     svg.append("g")
         .call(d3.axisLeft(y));
@@ -297,58 +302,14 @@ function createRatioChart(data, selectedCountries = []){
     svg.append("g")
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x));
-    
-    // Color scale
-    // const color = d3.scaleOrdinal()
-    //     .domain(["Gold", "Silver", "Bronze"])
-    //     .range(["#ffd700", "#c0c0c0", "#cd7f32"]);
-
-    // Tooltip
-    // const tooltip = d3.select(".tooltip");
-
-    // Bars
-    // svg.append("g")
-    //     .selectAll("g")
-    //     .data(series)
-    //     .enter()
-    //     .append("g")
-    //     .attr("fill", d => color(d.key))
-    //     .selectAll("rect")
-    //     .data(d => d)
-    //     .enter()
-    //     .append("rect")
-    //     .attr("x", d => x(d[0]))
-    //     .attr("y", d => y(d.data["Team/NOC"]))
-    //     .attr("width", d => x(d[1]) - x(d[0]))
-    //     .attr("height", y.bandwidth())
-    //     .on("mouseover", function(event, d) {
-    //         const [xStart, xEnd] = d;
-    //         const medalsCount = xEnd - xStart; // get medal count from data
-    //         tooltip.transition() // fade in
-    //             .duration(200)
-    //             .style("opacity", .9);
-    //         tooltip.html(medalsCount) // position tooltip
-    //             .style("left", (event.pageX + 5) + "px")
-    //             .style("top", (event.pageY - 9) + "px");
-    //         d3.select(this).attr("stroke", "black"); //outline bar
-    //     })
-    //     .on("mouseout", function(d) {
-    //         tooltip.transition() // fade out
-    //             .duration(200)
-    //             .style("opacity", 0);
-    //         d3.select(this).attr("stroke", null); // remove outline
-    //     });
 }
 
+// listener to update the selected countries and redraw the charts
 function updateSelectedCountries(data, ratioData) {
     const selectedCountries = d3.selectAll(".country-button.selected")
         .nodes()
         .map(button => button.getAttribute("data-team"));
 
-    console.log("Selected countries:", selectedCountries);
-
-    // TODO
-    // trigger listener for barchat like updateBarChart(selectedCountries);
     createMedalsChart(data, selectedCountries);
     createRatioChart(ratioData, selectedCountries);
 }
