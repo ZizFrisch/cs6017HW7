@@ -16,10 +16,12 @@ window.onload = async function(){
     let parsedAthletes = d3.csvParse(athletes, d3.autoType);
 
     // aggregate medals and athletes by country
-    
     let ratioData = getRatios(parsedData, parsedAthletes);
     console.log("RatioData: ", ratioData);
     
+
+    // generate country buttons
+    generateCountryButtons(parsedData);
     createMedalsChart(parsedData);
     createRatioChart(ratioData);
 };
@@ -58,7 +60,12 @@ function getRatios(medals, athletes){
 }
 
 
-function createMedalsChart(data){
+function createMedalsChart(data, selectedCountries = []){
+    // Filter data if selected countries are provided
+    if (selectedCountries.length > 0) {
+        data = data.filter(d => selectedCountries.includes(d["Team/NOC"]));
+    }
+    
     //create a stack generator
     const stack = d3.stack()
     .keys(["Gold", "Silver", "Bronze"]);
@@ -142,9 +149,6 @@ function createMedalsChart(data){
                 .style("opacity", 0);
             d3.select(this).attr("stroke", null); // remove outline
         });
-
-    // generate country buttons
-    generateCountryButtons(parsedData);
 };
 
 function generateCountryButtons(data) {
@@ -184,27 +188,19 @@ function generateCountryButtons(data) {
     });
 }
 
-function updateSelectedCountries() {
-    const selectedCountries = d3.selectAll(".team-button.selected")
-        .nodes()
-        .map(button => button.getAttribute("data-team"));
 
-    console.log("Selected countries:", selectedCountries);
-
-    // TODO
-    // trigger listener for barchat like updateBarChart(selectedCountries);
-}
-
-}
-
-
-function createRatioChart(data){
+function createRatioChart(data, selectedCountries = []){
     // Create a stack generator
     // const stack = d3.stack()
     // .keys(["Gold", "Silver", "Bronze"]);
 
     // const series = stack(data);
     // console.log("Stacked data:", series);
+
+    // Filter data if selected countries are provided
+    if (selectedCountries.length > 0) {
+        data = data.filter(d => selectedCountries.includes(d["Team/NOC"]));
+    }
     
     //create a bar chart
     const margin = {top: 20, right:30, bottom: 40, left:90};
@@ -294,4 +290,15 @@ function createRatioChart(data){
     //             .style("opacity", 0);
     //         d3.select(this).attr("stroke", null); // remove outline
     //     });
+}
+
+function updateSelectedCountries() {
+    const selectedCountries = d3.selectAll(".team-button.selected")
+        .nodes()
+        .map(button => button.getAttribute("data-team"));
+
+    console.log("Selected countries:", selectedCountries);
+
+    // TODO
+    // trigger listener for barchat like updateBarChart(selectedCountries);
 }

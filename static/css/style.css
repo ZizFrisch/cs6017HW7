@@ -7,7 +7,7 @@ body{
     overflow: auto;
     display: flex;
 }
-#leftDiv {
+#leftDiv, #centerDiv {
     /* width: 40%; */
     width: 500px;
     height: 900px;
@@ -29,14 +29,6 @@ svg{
     border: 3px solid blue;
     /* display: block;
     width: 100% */
-}
-#centerDiv {
-    /* width: 40%; */
-    width: 500px;
-    height: 900px;
-    display: inline-block;
-    border: 3px solid red;
-    flex:1;
 }
 #canvas {
     height: 600px;
