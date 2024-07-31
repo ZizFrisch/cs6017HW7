@@ -8,17 +8,15 @@ body{
     display: flex;
 }
 #leftDiv, #centerDiv {
-    /* width: 40%; */
     width: 500px;
     height: 900px;
     overflow-y: scroll;
     display: inline-block;
     direction: ltr;
-    border: 3px solid pink;
     flex:1;
 }
 div {
-    border: 3px solid black;
+    border: 2px solid gray;
 }
 
 .selected {
@@ -26,9 +24,8 @@ div {
 }
 
 svg{
-    border: 3px solid blue;
-    /* display: block;
-    width: 100% */
+    display: block;
+    width: 100%
 }
 #canvas {
     height: 600px;
@@ -38,7 +35,7 @@ svg{
     width: 15%;
     height: 900px;
     display: inline-block;
-    border: 3px solid purple;
+    border: 2px solid gray;
     overflow-y: scroll;
 }
 
