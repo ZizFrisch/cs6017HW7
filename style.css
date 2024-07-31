@@ -1,0 +1,81 @@
+body{
+    display:flex;
+}
+#main {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+}
+#leftDiv, #centerDiv {
+    width: 500px;
+    height: 1000px;
+    /* overflow-y: scroll; */
+    display: inline-block;
+    direction: ltr;
+    flex:1;
+}
+div {
+    border: 2px solid gray;
+}
+
+.selected {
+    background: blue;
+}
+
+svg{
+    display: block;
+    width: 100%
+}
+#canvas {
+    height: 600px;
+}
+
+#rightDiv {
+    width: 15%;
+    height: 1000px;
+    display: inline-block;
+    border: 2px solid gray;
+    overflow-y: scroll;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 20px;
+    height: 10px;
+    padding: 2px;
+    font: 10px sans-serif;
+    background: lightgreen;
+    border: 1px solid darkgreen;
+    border-radius: 8px;
+    pointer-events: none;
+    opacity: 0;
+}
+button {
+    display: block;
+    margin: 5px;
+    padding: 10px;
+    width: calc(100% - 20px);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: lightgray;
+    cursor: pointer;
+    text-align: center;
+}
+button.selected {
+    background: lightgreen;
+    border: 2px solid black;
+    color: black;
+}
+
+.grid line {
+    stroke: lightgray;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid .label-grid-line {
+    stroke: gray;
+    stroke-width: 2;
+}
