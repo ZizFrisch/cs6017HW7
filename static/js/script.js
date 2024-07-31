@@ -24,7 +24,7 @@ window.onload = async function(){
     createMedalsChart(parsedData);
     createRatioChart(ratioData);
     // generate country buttons
-    generateCountryButtons(parsedData);
+    generateCountryButtons(parsedData, ratioData);
 };
 
 
@@ -67,6 +67,12 @@ function createMedalsChart(data, selectedCountries = []){
     if (selectedCountries.length > 0) {
         data = data.filter(d => selectedCountries.includes(d["Team/NOC"]));
     }
+    else if(selectedCountries.length == 0){
+        //clear any existing content in the leftDiv
+        d3.select("#leftDiv").selectAll("svg").remove();
+        return;
+    }
+    
     
     //create a stack generator
     const stack = d3.stack()
@@ -131,6 +137,24 @@ function createMedalsChart(data, selectedCountries = []){
 
     svg.append("g")
         .call(d3.axisLeft(y));
+
+    // add gridlines for the x-axis
+    svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x)
+            .ticks(10)
+            .tickSize(-height)
+            .tickFormat("")
+        );
+
+    // // add gridlines for the y-axis
+    // svg.append("g")
+    //     .attr("class", "grid")
+    //     .call(d3.axisLeft(y)
+    //         .tickSize(-width)
+    //         .tickFormat("")
+    //     );
     
     // color scale
     const color = d3.scaleOrdinal()
@@ -174,7 +198,7 @@ function createMedalsChart(data, selectedCountries = []){
         });
 };
 
-function generateCountryButtons(data) {
+function generateCountryButtons(data, ratioData) {
     const rightDiv = d3.select("#rightDiv");
 
     // sort countries alphabetically
@@ -196,7 +220,7 @@ function generateCountryButtons(data) {
                 // If not selected, select all buttons
                 rightDiv.selectAll("button").classed("selected", true);
             }
-            updateSelectedCountries(data);
+            updateSelectedCountries(data, ratioData);
         });
 
     // create buttons for each country
@@ -207,27 +231,27 @@ function generateCountryButtons(data) {
             .text(team)
             .on("click", function() {
                 d3.select(this).classed("selected", !d3.select(this).classed("selected"));
-                updateSelectedCountries(data);
+                updateSelectedCountries(data, ratioData);
             });
     });
 }
 
 
 function createRatioChart(data, selectedCountries = []){
-    // Create a stack generator
-    // const stack = d3.stack()
-    // .keys(["Gold", "Silver", "Bronze"]);
-
-    // const series = stack(data);
-    // console.log("Stacked data:", series);
-
     // Filter data if selected countries are provided
     if (selectedCountries.length > 0) {
-        data = data.filter(d => selectedCountries.includes(d["Team/NOC"]));
+        console.log("selected countries in Ratio data: ", selectedCountries)
+        data = data.filter(d => selectedCountries.includes(d.country));
+        console.log("Filtered Ratio Data:", data)
+    }
+    else if(selectedCountries.length == 0){
+        //clear any existing content in the leftDiv
+        d3.select("#centerDiv").selectAll("svg").remove();
+        return;
     }
     
     //create a bar chart
-    const margin = {top: 20, right:30, bottom: 40, left:130};
+    const margin = {top: 5, right:30, bottom: 40, left:130};
     const div = document.getElementById("centerDiv");
     const divWidth = div.clientWidth;
     const divHeight = div.clientHeight;
@@ -235,7 +259,7 @@ function createRatioChart(data, selectedCountries = []){
     const height = divHeight - margin.top - margin.bottom;
 
     //clear any existing content in the centerDiv
-    d3.select("#centerDiv").selectAll("*").remove();
+    d3.select("#centerDiv").selectAll("svg").remove();
 
     const svg = d3.select("#centerDiv")
         .append("svg")
@@ -316,7 +340,7 @@ function createRatioChart(data, selectedCountries = []){
     //     });
 }
 
-function updateSelectedCountries(data) {
+function updateSelectedCountries(data, ratioData) {
     const selectedCountries = d3.selectAll(".country-button.selected")
         .nodes()
         .map(button => button.getAttribute("data-team"));
@@ -326,4 +350,5 @@ function updateSelectedCountries(data) {
     // TODO
     // trigger listener for barchat like updateBarChart(selectedCountries);
     createMedalsChart(data, selectedCountries);
+    createRatioChart(ratioData, selectedCountries);
 }
